@@ -59,5 +59,4 @@ function autoPortServer(cb) {
 // listen
 autoPortServer(port => {
   ctx.log(`Server runing at http://${ctx.options.server.host}:${port}`, 1)
-  // ctx.log(`Server root: ${ctx.options.server.root}`)
 })

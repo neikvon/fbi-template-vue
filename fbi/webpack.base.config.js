@@ -29,7 +29,10 @@ module.exports = (require, ctx) => {
         root: path.join(__dirname, '../src'),
         components: path.join(__dirname, '../src/components')
       },
-      modules: [nodeModulesPath] // important !!
+      modules: [
+        nodeModulesPath,
+        'node_modules'
+      ] // important !!
     },
     resolveLoader: {
       modules: [nodeModulesPath] // important !!

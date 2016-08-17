@@ -20,7 +20,7 @@ module.exports = (require, ctx) => {
       'process.env.NODE_ENV': JSON.stringify('production')
     }),
     new webpack.LoaderOptionsPlugin({
-      minimize: true
+      minimize: true // minify css
     }),
     new webpack.optimize.UglifyJsPlugin({
       compress: {

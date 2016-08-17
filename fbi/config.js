@@ -7,9 +7,9 @@ module.exports = {
     port: 8888
   },
   npm: {
-    alias: 'npm',
-    // options: '--save-dev'
-    options: '--save-dev --registry=https://registry.npm.taobao.org'
+    alias: 'tnpm',
+    options: ''
+    // options: '--registry=https://registry.npm.taobao.org'
   },
   alias: {
     b: 'build',
