@@ -1,19 +1,37 @@
+<style>
+  .logo {
+    width: 120px;
+  }
+
+  .bottom {
+    position: fixed;
+    width: 100%;
+    left: 0;
+    bottom: 20px;
+  }
+</style>
+
 <template>
-  <div class="page">
-    <counter></counter>
-    <h1>Hello world!</h1>
-    <p>
-      To get started, edit files in <code>./src</code> and save.
-    </p>
-  </div>
+  <section class="page">
+    <div>
+      <img :src="logo" class="logo">
+    </div>
+    <h2>This is Home</h2>
+    <img-list class="bottom"></img-list>
+  </section>
 </template>
 
 <script>
-  import Counter from '../components/Counter'
+  import ImgList from 'components/ImgList'
 
   export default {
     components: {
-      Counter
+      ImgList
+    },
+    data() {
+      return {
+        logo: require('../static/img/logo.png')
+      }
     }
   }
 </script>

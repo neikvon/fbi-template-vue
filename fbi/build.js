@@ -1,5 +1,6 @@
 const webpack = require('webpack')
-const webpackConfig = require('./webpack.prod.config')(require, ctx)
+ctx.isProd = true
+const webpackConfig = require('./webpack.config')(require, ctx)
 
 webpack(webpackConfig, (err, stats) => {
   if (err) {

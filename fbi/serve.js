@@ -3,12 +3,9 @@ const path = require('path')
 const http = require('http')
 const express = require('express')
 const webpack = require('webpack')
-const config = require('./webpack.dev.config')(require, ctx)
-
+const config = require('./webpack.config')(require, ctx)
 const app = express()
-
 const compiler = webpack(config)
-
 const devMiddleWare = require('webpack-dev-middleware')(compiler, {
   publicPath: config.output.publicPath,
   stats: {
