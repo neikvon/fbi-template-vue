@@ -3,10 +3,11 @@ const path = require('path')
 const http = require('http')
 const express = require('express')
 const webpack = require('webpack')
+const proxy = require('express-http-proxy')
 const config = require('./webpack.config')(require, ctx)
+
 const app = express()
-const compiler = webpack(config)
-const devMiddleWare = require('webpack-dev-middleware')(compiler, {
+const options = {
   publicPath: config.output.publicPath,
   stats: {
     colors: true,
@@ -15,7 +16,19 @@ const devMiddleWare = require('webpack-dev-middleware')(compiler, {
     chunks: false,
     chunkModules: false
   }
-})
+}
+const compiler = webpack(config)
+const devMiddleWare = require('webpack-dev-middleware')(compiler, options)
+
+// proxy
+const proxyOptions = ctx.options.server.proxy
+if (proxyOptions) {
+  for (let p in proxyOptions) {
+    app.use(p, proxy(proxyOptions[p]))
+    ctx.log(`Proxy ${p} => ${proxyOptions[p]}`)
+  }
+}
+
 app.use(devMiddleWare)
 app.use(require('webpack-hot-middleware')(compiler))
 

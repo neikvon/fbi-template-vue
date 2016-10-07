@@ -4,7 +4,10 @@ module.exports = {
   server: {
     root: 'dst/',
     host: 'localhost',
-    port: 8888
+    port: 8888,
+    // proxy: {
+    //   '/api': 'http://qqar.oa.com'
+    // }
   },
   npm: {
     alias: 'tnpm',
@@ -14,5 +17,15 @@ module.exports = {
   alias: {
     b: 'build',
     s: 'serve'
+  },
+  webpack: {
+    data: {
+      dev: {
+        __APIROOT__: '/api/'
+      },
+      prod: {
+        __APIROOT__: 'http://demo.api.com/'
+      }
+    }
   }
 }

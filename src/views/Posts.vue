@@ -8,7 +8,6 @@
 <template>
   <section class="posts">
     <posts-list></posts-list>
-    <router-link :to="{ name: 'private' }">Private Link</router-link>
   </section>
 </template>
 
@@ -18,6 +17,9 @@
   export default {
     components: {
       PostsList
+    },
+    created() {
+      // document.title += ' - Posts'
     }
   }
 </script>

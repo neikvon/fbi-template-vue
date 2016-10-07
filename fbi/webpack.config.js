@@ -9,7 +9,8 @@ module.exports = (require, ctx) => {
   const ExtractTextPlugin = require('extract-text-webpack-plugin')
   const ProgressBarPlugin = require('progress-bar-webpack-plugin')
   const pkg = require('../package')
-  const nodeModulesPath = ctx.options.node_modules_path
+  const nodeModulesPath = ctx.nodeModulesPath = ctx.options.node_modules_path
+  const eslintConfig = require('./eslint.config')(require, ctx)
   const root = process.cwd()
   const noop = function () { }
   // const nodeModulesPath = ctx._.cwd('node_modules') // for local test
@@ -25,6 +26,31 @@ module.exports = (require, ctx) => {
     }),
     require('precss')
   ]
+
+  function DataForDefinePlugin() {
+    let original
+    if (ctx.options.webpack && ctx.options.webpack.data) {
+      if (ctx.isProd) {
+        original = ctx.options.webpack.data.prod || null
+      } else {
+        original = ctx.options.webpack.data.dev || null
+      }
+    }
+
+    if (original && typeof original === 'object' && Object.keys(original).length > 0) {
+      const copy = JSON.parse(JSON.stringify(original))
+      Object.keys(copy).map(item => {
+        switch (typeof item) {
+          case 'string':
+            copy[item] = JSON.stringify(copy[item])
+            break
+        }
+      })
+      return copy
+    }
+
+    return {}
+  }
 
   const config = {
     cache: true,
@@ -55,7 +81,14 @@ module.exports = (require, ctx) => {
     devtool: ctx.isProd ? 'source-map' : 'cheap-source-map',
     module: {
       noParse: [],
-      loaders: [
+      rules: [
+        {
+          enforce: 'pre', // enforce: 'pre', enforce: 'post',
+          test: /\.(vue|js)$/,
+          loader: 'eslint-loader',
+          exclude: /node_modules/,
+          query: eslintConfig
+        },
         {
           test: /\.vue$/,
           loaders: ['vue-loader']
@@ -64,7 +97,6 @@ module.exports = (require, ctx) => {
           test: /\.js$/,
           loaders: ['babel-loader'],
           exclude: path => {
-            // 路径中含有 node_modules 的就不去解析。
             const isNpmModule = !!path.match(/node_modules/)
             return isNpmModule
           }
@@ -87,6 +119,8 @@ module.exports = (require, ctx) => {
           root: root
         })
         : noop,
+      new webpack.DefinePlugin(DataForDefinePlugin()),
+
       // ^Webpack 2.1.0-beta23
       // https://github.com/webpack/webpack/pull/2974#issuecomment-245857168
       new webpack.LoaderOptionsPlugin({
@@ -113,11 +147,8 @@ module.exports = (require, ctx) => {
         },
         minimize: ctx.isProd // minify css
       }),
-      new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify(ctx.isProd ? 'production' : 'development')
-      }),
       new HtmlWebpackPlugin({
-        title: 'vue2',
+        title: 'Vue 2',
         template: __dirname + '/index.html',
         filename: '../index.html'
       }),

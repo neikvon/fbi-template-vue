@@ -16,7 +16,11 @@
     <div>
       <img :src="logo" class="logo">
     </div>
-    <h2>This is Home</h2>
+    <h2>
+      This is Home
+      <br>
+      API Root: {{ __APIROOT__ }}
+    </h2>
     <img-list class="bottom"></img-list>
   </section>
 </template>

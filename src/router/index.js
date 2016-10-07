@@ -8,7 +8,7 @@ import Login from '../views/Login'
 Vue.use(Router)
 
 const router = new Router({
-  mode: 'history',
+  // mode: 'history',
   linkActiveClass: 'main-nav-active',
   routes: [
     {
@@ -46,16 +46,16 @@ const router = new Router({
   ]
 })
 
-router.beforeEach((route, redirect, next) => {
+router.beforeEach((to, from, next) => {
   window.scrollTo(0, 0)
-  if (route.matched.some(record => record.meta.requiresAuth)) {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
     // const isLoggedIn = auth.loggedIn()
     const isLoggedIn = false
 
     if (!isLoggedIn) {
-      redirect({
+      router.push({
         path: '/login',
-        query: { redirect: route.fullPath }
+        query: { redirect: to.fullPath }
       })
     } else {
       next()
@@ -65,8 +65,8 @@ router.beforeEach((route, redirect, next) => {
   }
 })
 
-router.afterEach(route => {
-  console.info(`${new Date().toLocaleString()}: ${route.path}`)
+router.afterEach((to, from) => {
+  console.info(`${new Date().toLocaleString()}: ${to.path}`)
 })
 
 export default router
