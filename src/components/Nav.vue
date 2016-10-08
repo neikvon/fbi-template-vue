@@ -19,6 +19,7 @@
   <nav class="main-nav">
     <router-link :to="{ name: 'home' }" exact>Home</router-link>
     <router-link :to="{ name: 'posts' }" exact>Posts</router-link>
+    <router-link :to="{ name: 'login' }" exact>login</router-link>
 
 
     <!--

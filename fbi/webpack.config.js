@@ -9,11 +9,11 @@ module.exports = (require, ctx) => {
   const ExtractTextPlugin = require('extract-text-webpack-plugin')
   const ProgressBarPlugin = require('progress-bar-webpack-plugin')
   const pkg = require('../package')
-  const nodeModulesPath = ctx.nodeModulesPath = ctx.options.node_modules_path
+  // const nodeModulesPath = ctx.nodeModulesPath = ctx.options.node_modules_path
+  const nodeModulesPath = ctx.nodeModulesPath = ctx._.cwd('node_modules') // for local test
   const eslintConfig = require('./eslint.config')(require, ctx)
   const root = process.cwd()
   const noop = function () { }
-  // const nodeModulesPath = ctx._.cwd('node_modules') // for local test
   const deps = [
     'vue/dist/vue.min.js',
     'vuex/dist/vuex.min.js',
