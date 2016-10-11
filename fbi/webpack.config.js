@@ -9,8 +9,8 @@ module.exports = (require, ctx) => {
   const ExtractTextPlugin = require('extract-text-webpack-plugin')
   const ProgressBarPlugin = require('progress-bar-webpack-plugin')
   const pkg = require('../package')
-  // const nodeModulesPath = ctx.nodeModulesPath = ctx.options.node_modules_path
-  const nodeModulesPath = ctx.nodeModulesPath = ctx._.cwd('node_modules') // for local test
+  const nodeModulesPath = ctx.nodeModulesPath = ctx.options.node_modules_path
+  // const nodeModulesPath = ctx.nodeModulesPath = ctx._.cwd('node_modules') // for local test
   const eslintConfig = require('./eslint.config')(require, ctx)
   const root = process.cwd()
   const noop = function () { }
@@ -71,7 +71,7 @@ module.exports = (require, ctx) => {
         components: path.join(root, 'src/components')
       },
       modules: [
-        // nodeModulesPath,
+        nodeModulesPath,
         'node_modules'
       ] // important !!
     },
@@ -102,14 +102,26 @@ module.exports = (require, ctx) => {
           }
         },
         {
-          test: /\.(png|jpg|gif|svg)$/,
+          test: /\.json$/,
+          loader: 'json'
+        },
+        {
+          test: /\.(jpe?g|png|gif|woff|woff2|eot|ttf|svg)(\?v=\d+\.\d+\.\d+)?$/,
           loader: 'url',
           query: {
             limit: 5000,
             name: ctx.isProd
-              ? '/img/[name].[hash:8].[ext]'
+              ? '/[name].[hash:8].[ext]'
               : 'img/[name].[ext]?[hash:8]'
           }
+        },
+        {
+          test: /\.css$/,
+          loader: ctx.isProd ? ExtractTextPlugin.extract({
+            fallbackLoader: 'style',
+            loader: 'css!postcss',
+            publicPath: ''  // assets path prefix in css
+          }) : 'style!css!postcss' // extract-text-webpack-plugin not support css links hot reload
         }
       ]
     },
