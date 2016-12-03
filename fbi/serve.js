@@ -1,24 +1,16 @@
-'use strict'
 const path = require('path')
 const http = require('http')
 const express = require('express')
 const webpack = require('webpack')
 const proxy = require('express-http-proxy')
-const config = require('./webpack.config')(require, ctx)
+const serveDst = ctx.taskParams && ctx.taskParams[0] === 'p' // fbi s -p
+
+// get env match config
+require('./helpers/getEnv.js')(ctx, serveDst ? '' : 'dev')
+const config = require('./config/webpack.config')(require, ctx)
+let start = require('./helpers/getPort.js')(ctx, ctx.options.server.port)
 
 const app = express()
-const options = {
-  publicPath: config.output.publicPath,
-  stats: {
-    colors: true,
-    modules: false,
-    children: false,
-    chunks: false,
-    chunkModules: false
-  }
-}
-const compiler = webpack(config)
-const devMiddleWare = require('webpack-dev-middleware')(compiler, options)
 
 // proxy
 const proxyOptions = ctx.options.server.proxy
@@ -29,19 +21,33 @@ if (proxyOptions) {
   }
 }
 
-app.use(devMiddleWare)
-app.use(require('webpack-hot-middleware')(compiler))
+if (serveDst) {
+  app.use(express.static(ctx.options.server.root))
+  ctx.log(`Serving '${ctx.options.server.root}'`)
+} else {
+  const options = {
+    publicPath: config.output.publicPath,
+    stats: {
+      colors: true,
+      modules: false,
+      children: false,
+      chunks: false,
+      chunkModules: false
+    }
+  }
+  const compiler = webpack(config)
+  const devMiddleWare = require('webpack-dev-middleware')(compiler, options)
 
-app.get('*', (req, res) => {
-  const fs = devMiddleWare.fileSystem
-  devMiddleWare.waitUntilValid(() => {
-    res.end(fs.readFileSync(path.join(config.output.path, '../index.html')))
+  app.use(devMiddleWare)
+  app.use(require('webpack-hot-middleware')(compiler))
+
+  app.get('*', (req, res) => {
+    const fs = devMiddleWare.fileSystem
+    devMiddleWare.waitUntilValid(() => {
+      res.end(fs.readFileSync(path.join(config.output.path, '../index.html')))
+    })
   })
-})
-
-let start = ctx.taskParams
-  ? ctx.taskParams[0] * 1
-  : ctx.options.server.port
+}
 
 // auto selected a valid port & start server
 function autoPortServer(cb) {
@@ -68,5 +74,5 @@ function autoPortServer(cb) {
 
 // listen
 autoPortServer(port => {
-  ctx.log(`Server runing at http://${ctx.options.server.host}:${port}`, 1)
+  ctx.log(`Server Addr: ${ctx._.colors().yellow('http://'+ctx.options.server.host+':'+port)}`, 1)
 })

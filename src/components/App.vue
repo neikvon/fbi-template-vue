@@ -34,7 +34,7 @@
 
   export default {
     components: {
-      MainNav
+      MainNav,
     },
   }
 </script>

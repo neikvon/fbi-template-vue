@@ -1,6 +1,9 @@
 const webpack = require('webpack')
+process.env.NODE_ENV = 'production'
 ctx.isProd = true
-const webpackConfig = require('./webpack.config')(require, ctx)
+
+require('./helpers/getEnv.js')(ctx, 'prod')
+const webpackConfig = require('./config/webpack.config')(require, ctx)
 
 webpack(webpackConfig, (err, stats) => {
   if (err) {

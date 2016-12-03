@@ -9,8 +9,8 @@
     left: 0;
     bottom: 20px;
   }
-</style>
 
+</style>
 <template>
   <section class="page">
     <div>
@@ -18,24 +18,27 @@
     </div>
     <h2>
       This is Home
-      <br>
-      API Root: {{ __APIROOT__ }}
     </h2>
+    <demo></demo>
     <img-list class="bottom"></img-list>
   </section>
 </template>
-
 <script>
   import ImgList from 'components/ImgList'
+  import Demo from 'components/demo'
 
   export default {
     components: {
-      ImgList
+      ImgList,
+      Demo
     },
     data() {
       return {
         logo: require('../static/img/logo.png')
       }
+    },
+    created() {
+      console.log(__APIROOT__)
     }
   }
 </script>
